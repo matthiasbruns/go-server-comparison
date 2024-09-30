@@ -1,13 +1,9 @@
 .PHONY: all
-all: install gen run
-
-.PHONY: install
-install: ## Install dependencies
-	go install github.com/swaggo/swag/cmd/swag@latest
+all: gen run
 
 .PHONY: gen
 gen: ## Generate code
-	swag init
+	go run github.com/swaggo/swag/cmd/swag init
 	go generate ./...
 	go mod tidy
 
