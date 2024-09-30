@@ -103,7 +103,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/PutModel"
+                            "$ref": "#/definitions/NameModel"
                         }
                     }
                 ],
@@ -154,7 +154,7 @@ const docTemplate = `{
                 }
             }
         },
-        "PutModel": {
+        "NameModel": {
             "description": "Model for put request - concatenates hello world with name",
             "type": "object",
             "required": [

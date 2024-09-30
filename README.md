@@ -14,7 +14,7 @@ The following web servers are compared:
 - [StdLib](https://golang.org/pkg/net/http/)
 - [Gin](https://github.com/gin-gonic/gin)
 - [Fiber](https://github.com/gofiber/fiber)
-
+- [WebRPC](https://github.com/webrpc/webrpc)
 
 All three examples use swaggo for swagger generation:
 
