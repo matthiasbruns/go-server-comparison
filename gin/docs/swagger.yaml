@@ -1,0 +1,108 @@
+definitions:
+  ErrorResponse:
+    properties:
+      error:
+        type: string
+    required:
+    - error
+    type: object
+  Message:
+    description: Response that contains a message
+    properties:
+      message:
+        type: string
+    required:
+    - message
+    type: object
+  PutModel:
+    description: Model for put request - concatenates hello world with name
+    properties:
+      name:
+        example: John
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - name
+    type: object
+info:
+  contact: {}
+  description: Response that contains a message
+paths:
+  /helloworld:
+    get:
+      description: getHelloWorld returns hello world
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: getHelloWorld returns hello world
+      tags:
+      - helloworld
+    post:
+      consumes:
+      - application/json
+      description: getHelloWorld returns hello world with name
+      parameters:
+      - description: what name
+        in: body
+        name: query
+        required: true
+        schema:
+          $ref: '#/definitions/PutModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: getHelloWorld returns hello world with name
+      tags:
+      - helloworld
+    put:
+      consumes:
+      - application/json
+      description: getHelloWorld returns hello world with name
+      parameters:
+      - example: John
+        in: query
+        maxLength: 100
+        minLength: 2
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: getHelloWorld returns hello world with name
+      tags:
+      - helloworld
+swagger: "2.0"
