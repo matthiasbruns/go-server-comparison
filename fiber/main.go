@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/gin-gonic/gin"
-	"github.com/matthiasbruns/go-server-comparison/gin/docs"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
+	_ "github.com/matthiasbruns/go-server-comparison/fiber/docs"
 )
 
-// NameModel model info
+// nameModel model info
 // @Description Model for put request - concatenates hello world with name
 type nameModel struct {
 	Name string `json:"name" form:"name" binding:"required,min=2,max=100,alphanum" swaggertype:"string" example:"John"`
@@ -25,23 +25,22 @@ type errorResponse struct {
 	Error string `json:"error" binding:"required"`
 } // @name ErrorResponse
 
+// @BasePath /api/v1
 func main() {
-	r := gin.Default()
+	// Initialize a new Fiber app
+	app := fiber.New()
 
-	docs.SwaggerInfo.BasePath = "/api/v1"
-	v1 := r.Group("/api/v1")
+	app.Get("/swagger/*", swagger.HandlerDefault)
+
+	v1 := app.Group("/api/v1")
 	{
-		v1.GET("/helloworld", getHelloWorld)
-		v1.PUT("/helloworld", putHelloWorld)
-		v1.POST("/helloworld", postHelloWorld)
+		v1.Get("/helloworld", getHelloWorld)
+		v1.Put("/helloworld", putHelloWorld)
+		v1.Post("/helloworld", postHelloWorld)
 	}
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	err := r.Run()
-
-	if err != nil {
-		panic(err)
-	}
+	// Start the server on port 3000
+	log.Fatal(app.Listen(":3000"))
 }
 
 // getHelloWorld godoc
@@ -52,10 +51,8 @@ func main() {
 // @Success      200  {object}   Message
 // @Failure      500  {object}   errorResponse
 // @Router /helloworld [get]
-func getHelloWorld(c *gin.Context) {
-	c.JSON(200, messageResponse{
-		Message: "hello world",
-	})
+func getHelloWorld(c *fiber.Ctx) error {
+	return c.JSON(messageResponse{Message: "hello world"})
 }
 
 // putHelloWorld godoc
@@ -69,18 +66,12 @@ func getHelloWorld(c *gin.Context) {
 // @Failure      400  {object}   errorResponse
 // @Failure      500  {object}   errorResponse
 // @Router /helloworld [put]
-func putHelloWorld(c *gin.Context) {
-	var model nameModel
-	if err := c.ShouldBindQuery(&model); err != nil {
-		c.JSON(400, errorResponse{
-			Error: err.Error(),
-		})
-		return
+func putHelloWorld(c *fiber.Ctx) error {
+	var query nameModel
+	if err := c.QueryParser(&query); err != nil {
+		return c.Status(400).JSON(errorResponse{Error: err.Error()})
 	}
-
-	c.JSON(200, messageResponse{
-		Message: fmt.Sprintf("hello world %s", model.Name),
-	})
+	return c.JSON(messageResponse{Message: fmt.Sprintf("hello world %s", query.Name)})
 }
 
 // postHelloWorld godoc
@@ -94,16 +85,10 @@ func putHelloWorld(c *gin.Context) {
 // @Failure      400  {object}   errorResponse
 // @Failure      500  {object}   errorResponse
 // @Router /helloworld [post]
-func postHelloWorld(c *gin.Context) {
-	var model nameModel
-	if err := c.ShouldBindJSON(&model); err != nil {
-		c.JSON(400, gin.H{
-			"error": err.Error(),
-		})
-		return
+func postHelloWorld(c *fiber.Ctx) error {
+	var query nameModel
+	if err := c.BodyParser(&query); err != nil {
+		return c.Status(400).JSON(errorResponse{Error: err.Error()})
 	}
-
-	c.JSON(200, messageResponse{
-		Message: fmt.Sprintf("hello world %s", model.Name),
-	})
+	return c.JSON(messageResponse{Message: fmt.Sprintf("hello world %s", query.Name)})
 }

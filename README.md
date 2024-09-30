@@ -8,7 +8,6 @@ This is a comparison of Go web servers. The comparison is based on the following
 - Error handling
 - Swagger generation
 - Validation
-- CORS
 
 The following web servers are compared:
 
