@@ -14,3 +14,16 @@ The following web servers are compared:
 - [StdLib](https://golang.org/pkg/net/http/)
 - [Gin](https://github.com/gin-gonic/gin)
 - [Fiber](https://github.com/gofiber/fiber)
+
+
+All three examples use swaggo for swagger generation:
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+```
+
+and generate the swagger documentation with:
+
+```bash
+swag init
+```
