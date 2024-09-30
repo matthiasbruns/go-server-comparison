@@ -1,0 +1,26 @@
+webrpc = v1             # version of webrpc schema format (ridl or json)
+
+name = hello-world      # name of your backend app
+version = v0.1.0        # version of your schema
+
+enum Gender: string
+  - MALE
+  - FEMALE
+  - OTHER
+
+struct Address
+  - street: string
+  - postalCode?: string
+  - city: string
+  - country: string
+
+struct User
+  - name: string
+  - age: uint8
+  - gender: Gender
+  - address?: Address
+
+# HelloWorldV1 greets the caller.
+service HelloWorldV1
+  - Simple() => (message: string)
+  - Greet(user: User) => (message: string)
