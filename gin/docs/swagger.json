@@ -93,7 +93,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/PutModel"
+                            "$ref": "#/definitions/NameModel"
                         }
                     }
                 ],
@@ -144,7 +144,7 @@
                 }
             }
         },
-        "PutModel": {
+        "NameModel": {
             "description": "Model for put request - concatenates hello world with name",
             "type": "object",
             "required": [
