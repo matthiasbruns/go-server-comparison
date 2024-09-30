@@ -53,8 +53,8 @@ func main() {
 // @Failure      500  {object}   errorResponse
 // @Router /helloworld [get]
 func getHelloWorld(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "hello world",
+	c.JSON(200, messageResponse{
+		Message: "hello world",
 	})
 }
 
@@ -72,14 +72,14 @@ func getHelloWorld(c *gin.Context) {
 func putHelloWorld(c *gin.Context) {
 	var model putModel
 	if err := c.ShouldBindQuery(&model); err != nil {
-		c.JSON(400, gin.H{
-			"error": err.Error(),
+		c.JSON(400, errorResponse{
+			Error: err.Error(),
 		})
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": fmt.Sprintf("hello world %s", model.Name),
+	c.JSON(200, messageResponse{
+		Message: fmt.Sprintf("hello world %s", model.Name),
 	})
 }
 
@@ -103,7 +103,7 @@ func postHelloWorld(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{
-		"message": fmt.Sprintf("hello world %s", model.Name),
+	c.JSON(200, messageResponse{
+		Message: fmt.Sprintf("hello world %s", model.Name),
 	})
 }
