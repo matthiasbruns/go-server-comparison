@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/swagger"
 	"github.com/google/uuid"
 	_ "github.com/matthiasbruns/go-server-comparison/fiber/docs"
+	"github.com/matthiasbruns/go-server-comparison/fiber/types"
 )
 
 func init() {
@@ -21,23 +22,21 @@ func init() {
 	})
 }
 
-type CustomID uuid.UUID
-
 func CustomIDConverter(value string) reflect.Value {
 	v, err := uuid.Parse(value)
 	if err != nil {
 		return reflect.ValueOf("")
 	}
-	return reflect.ValueOf(CustomID(v))
+	return reflect.ValueOf(types.UUID(v))
 }
 
 var CustomIDParser = fiber.ParserType{
-	Customtype: CustomID(uuid.NullUUID{}.UUID),
+	Customtype: types.UUID(uuid.NullUUID{}.UUID),
 	Converter:  CustomIDConverter,
 }
 
 type CustomTypeQuery struct {
-	ID CustomID `json:"id" form:"id" binding:"required" example:"123e4567-e89b-12d3-a456-426614174000"`
+	ID types.UUID `json:"id" form:"id" binding:"required" example:"123e4567-e89b-12d3-a456-426614174000"`
 }
 
 // nameModel model info
@@ -132,7 +131,7 @@ func postHelloWorld(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param        custom    query     CustomTypeQuery  true  "custom type" CustomTypeQuery
-// @Success      200  {object}   CustomID
+// @Success      200  {object}   types.UUID
 // @Failure      400  {object}   errorResponse
 // @Failure      500  {object}   errorResponse
 // @Router /custom-type [get]
