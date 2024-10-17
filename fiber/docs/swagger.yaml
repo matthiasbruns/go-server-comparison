@@ -30,6 +30,35 @@ info:
   contact: {}
   description: Response that contains a message
 paths:
+  /custom-type:
+    get:
+      consumes:
+      - application/json
+      description: getCustomType returns custom type
+      parameters:
+      - example: 123e4567-e89b-12d3-a456-426614174000
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: getCustomType returns custom type
+      tags:
+      - custom
   /helloworld:
     get:
       description: getHelloWorld returns hello world

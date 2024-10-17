@@ -3,11 +3,42 @@ package main
 import (
 	"fmt"
 	"log"
+	"reflect"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
+	"github.com/google/uuid"
 	_ "github.com/matthiasbruns/go-server-comparison/fiber/docs"
 )
+
+func init() {
+	fiber.SetParserDecoder(fiber.ParserConfig{
+		IgnoreUnknownKeys: false,
+		ParserType: []fiber.ParserType{
+			CustomIDParser,
+		},
+		ZeroEmpty: true,
+	})
+}
+
+type CustomID uuid.UUID
+
+func CustomIDConverter(value string) reflect.Value {
+	v, err := uuid.Parse(value)
+	if err != nil {
+		return reflect.ValueOf("")
+	}
+	return reflect.ValueOf(CustomID(v))
+}
+
+var CustomIDParser = fiber.ParserType{
+	Customtype: CustomID(uuid.NullUUID{}.UUID),
+	Converter:  CustomIDConverter,
+}
+
+type CustomTypeQuery struct {
+	ID CustomID `json:"id" form:"id" binding:"required" example:"123e4567-e89b-12d3-a456-426614174000"`
+}
 
 // nameModel model info
 // @Description Model for put request - concatenates hello world with name
@@ -37,6 +68,7 @@ func main() {
 		v1.Get("/helloworld", getHelloWorld)
 		v1.Put("/helloworld", putHelloWorld)
 		v1.Post("/helloworld", postHelloWorld)
+		v1.Get("/custom-type", getCustomType)
 	}
 
 	// Start the server on port 3000
@@ -91,4 +123,26 @@ func postHelloWorld(c *fiber.Ctx) error {
 		return c.Status(400).JSON(errorResponse{Error: err.Error()})
 	}
 	return c.JSON(messageResponse{Message: fmt.Sprintf("hello world %s", query.Name)})
+}
+
+// getCustomType godoc
+// @Summary getCustomType returns custom type
+// @Description getCustomType returns custom type
+// @Tags custom
+// @Accept json
+// @Produce json
+// @Param        custom    query     CustomTypeQuery  true  "custom type" CustomTypeQuery
+// @Success      200  {object}   CustomID
+// @Failure      400  {object}   errorResponse
+// @Failure      500  {object}   errorResponse
+// @Router /custom-type [get]
+func getCustomType(c *fiber.Ctx) error {
+	// parse from query
+	var custom CustomTypeQuery
+
+	if err := c.QueryParser(&custom); err != nil {
+		return c.Status(400).JSON(errorResponse{Error: err.Error()})
+	}
+
+	return c.JSON(custom)
 }
